@@ -17,21 +17,17 @@
             Copy code
           </button>
         </div>
-        <nuxt-link to="/tweet">
+        <a class="twitter-share-button" :href="getHref" target="_blank">
           <img src="/twitter-icon.svg"/>
           Tweet
-        </nuxt-link>
+        </a>
         <button>
           <img src="/facebook-icon.png"/>
           Share
         </button>
       </div>
       <formData></formData>
-    </div>
-    <div v-if="showModal" class="modal">
-      <div>
-        <p>{{getCode}} has been copied !! <span>👍</span> closed in {{modalTime}}s</p>
-      </div>
+      <modal v-if="showModal" :time="modalTime"></modal>
     </div>
   </section>
 </template>
@@ -40,21 +36,25 @@
 import Vue from "vue";
 import Clipboard from "v-clipboard";
 import formData from "./form";
+import modal from "./modal";
 
 Vue.use(Clipboard);
 
 export default {
-  components: {formData},
+  components: {formData, modal},
   data() {
     return {
       showModal: false,
       modalTime: 5,
-      clearTimeout: null
+      clearTimeout: null,
     }
   },
   computed: {
     getCode() {
       return this.$store.state.code
+    },
+    getHref() {
+      return `https://twitter.com/intent/tweet?text=${encodeURIComponent(this.$store.state.tweetContent)}`;
     }
   },
   methods: {
@@ -78,7 +78,6 @@ export default {
 <style lang="scss" scoped>
   .description {
     display: flex;
-    flex-direction: column;
     height: 95vh;
     margin-top: 4em;
 
