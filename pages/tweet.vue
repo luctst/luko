@@ -12,6 +12,9 @@
 </template>
 
 <script>
+import encoreUrl from "encodeurl";
+import crypto from "crypto";
+
 export default {
   data() {
     return {
@@ -20,7 +23,36 @@ export default {
   },
   methods: {
     letsTweet() {
+      const oauthNounce = btoa(process.env.CONSUMER+ ':'+ Date.now());
+      const timeStamp = Date.now();
+      const oauthSignature = this.createSignature(oauthNounce, timeStamp);
 
+      fetch(`${this.$store.state.twitterApi}statuses/update.json?include_entities=true&status=${this.tweetContent}`, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          'Accept': "/",
+          'Authorization': `Oauth oauth_consumer_key="${process.env.CONSUMER}, oauth_nonce="${oauthNounce}, oauth_signature="${encoreUrl(oauthSignature)}", oauth_signature_method="HMAC-SHA1",oauth_timestamp="${timeStamp}", oauth_token="${process.env.TOKEN}", oauth_version="1.0"`
+        }
+      });
+    },
+    createSignature(nounce, tmp) {
+      const toEncode = [
+        "include_entities=true&",
+        `oauth_consumer_key=${process.env.CONSUMER}`,
+        `oauth_nonce=${nounce}`,
+        "oauth_signature_method=HMAC-SHA1",
+        `oauth_timestamp=${tmp}`,
+        `oauth_token=${process.env.TOKEN}`,
+        "oauth_version=1.0",
+        `&status=${this.tweetContent}`
+      ];
+      let signature = `POST&${encoreUrl(this.$store.state.twitterApi)}statuses/update.json?`;
+
+      toEncode.map(string => signature += encoreUrl(string));
+
+      const l = crypto.createHmac("sha1", `${signature}${process.env.CONSUMER_SECRET}&${process.env.TOKEN_SECRET}`).digest("base64");
+      return l;
     }
   }
 }
