@@ -1,6 +1,13 @@
 
 export default {
   mode: 'universal',
+  env: {
+    CONSUMER: "V4uEBSXzSC2TcEYQ2sgA0uNX8",
+    CONSUMER_SECRET: "IYBfuv5MKX5aok3LN4BEubne9wFhyvonEMfXFeK6jv85zXBOJP",
+    TOKEN: "756155610224168960-aeg2l1GlGk6DyL1yw93wvACeeG8dHJS",
+    TOKEN_SECRET: "7Cv2cn9HPmB5hOMKqJ1vtNrsD9R6EB0NAGFJFJkokQ2hi",
+    BEARER:"AAAAAAAAAAAAAAAAAAAAANeh9gAAAAAAssgTDfhSKGltKAAkF6Ca6CXPXGc%3DvoIQa0aBc9dlEVczES3qQAJ36xXMvxTZ3fDefayFgCJi31E4yV"
+  },
   /*
   ** Headers of the page
   */
@@ -39,7 +46,12 @@ export default {
   */
   modules: [
     '@nuxtjs/pwa',
+    '@nuxtjs/axios',
+    '@nuxtjs/proxy'
   ],
+  axios: {
+    debug: true
+  },
   /*
   ** Build configuration
   */
@@ -48,6 +60,11 @@ export default {
     ** You can extend webpack config here
     */
     extend (config, ctx) {
+      config.node = {
+        fs: 'empty',
+        net: 'empty',
+        tls: 'empty'
+      }
     }
   }
 }
